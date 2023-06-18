@@ -1,7 +1,11 @@
 package fedmag.gptandem;
 
-import fedmag.gptandem.services.GoogleSpeechToText;
-import fedmag.gptandem.services.MicrophoneService;
+import fedmag.gptandem.services.helper.ChatHistory;
+import fedmag.gptandem.services.helper.Message;
+import fedmag.gptandem.services.speech2text.GoogleSpeechToText;
+import fedmag.gptandem.services.speech2text.MicrophoneRecorder;
+import fedmag.gptandem.services.speech2text.MicrophoneService;
+import fedmag.gptandem.services.speech2text.Transcriber;
 import lombok.extern.slf4j.Slf4j;
 
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
@@ -9,13 +13,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class GPTandem {
     public static void main(String[] args) {
-        // Press Alt+Enter with your caret at the highlighted text to see how
-        // IntelliJ IDEA suggests fixing it.
-        log.info("Hello and welcome!");
 
-        MicrophoneService microphoneService = new MicrophoneService();
-        microphoneService.record();
-        GoogleSpeechToText s2t = new GoogleSpeechToText();
-        log.info(s2t.transcribe());
+        log.info("Hello and welcome!");
+        log.info("Creating empty chat history..");
+        ChatHistory chatHistory = new ChatHistory();
+
+        MicrophoneRecorder microphoneService = new MicrophoneService();
+        byte[] record = microphoneService.startRecording();
+
+        Transcriber speech2text = new GoogleSpeechToText();
+        String transcription = speech2text.transcribe(record);
+//        chatHistory.addMessage(new Message("user", transcription));
+        log.info(transcription);
+
     }
 }

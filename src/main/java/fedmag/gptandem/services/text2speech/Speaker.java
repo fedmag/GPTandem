@@ -1,4 +1,4 @@
-package fedmag.gptandem.services;
+package fedmag.gptandem.services.text2speech;
 
 public interface Speaker {
 
