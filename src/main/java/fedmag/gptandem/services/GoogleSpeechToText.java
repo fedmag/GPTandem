@@ -8,7 +8,13 @@ import com.google.cloud.speech.v1.RecognizeResponse;
 import com.google.cloud.speech.v1.SpeechClient;
 import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
 import com.google.cloud.speech.v1.SpeechRecognitionResult;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+
+import com.google.protobuf.ByteString;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -17,7 +23,9 @@ public class GoogleSpeechToText implements Transcriber {
 
     SpeechClient speechClient;
     public GoogleSpeechToText() {
+        log.info("Creating GoogleSpeechToTextInstance..");
         this.speechClient = this.initClient();
+        log.info("..instance created!");
     }
 
     private SpeechClient initClient() {
@@ -31,19 +39,26 @@ public class GoogleSpeechToText implements Transcriber {
     @Override
     public String transcribe() {
         // The path to the audio file to transcribe
-        String gcsUri = "gs://cloud-samples-data/speech/brooklyn_bridge.raw";
+        String gcsUri = "C:\\Users\\maggi\\IdeaProjects\\GPTandem\\recorded_audio.wav";
+
+        Path path = Paths.get("C:\\Users\\maggi\\IdeaProjects\\GPTandem\\recorded_audio.wav"    );
+        byte[] content;
+        try {
+            content = Files.readAllBytes(path);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         // Builds the sync recognize request
         RecognitionConfig config =
                 RecognitionConfig.newBuilder()
-                        .setEncoding(AudioEncoding.LINEAR16)
-                        .setSampleRateHertz(16000)
                         .setLanguageCode("en-US")
+                        .setAudioChannelCount(2)
                         .build();
-        RecognitionAudio audio = RecognitionAudio.newBuilder().setUri(gcsUri).build();
+        RecognitionAudio audio = RecognitionAudio.newBuilder().setContent(ByteString.copyFrom(content)).build();
 
         // Performs speech recognition on the audio file
-        RecognizeResponse response = speechClient.recognize(config, audio);
+        RecognizeResponse response = speechClient.recognize(config, audio); // this blocks till the response comes.
         List<SpeechRecognitionResult> results = response.getResultsList();
 
         String transcription = results.get(0).getAlternativesList().get(0).getTranscript();;
