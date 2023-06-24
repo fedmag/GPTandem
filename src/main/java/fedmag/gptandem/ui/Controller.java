@@ -7,10 +7,7 @@ import fedmag.gptandem.services.speech2text.MicrophoneRecorder;
 import fedmag.gptandem.services.speech2text.MicrophoneService;
 import fedmag.gptandem.services.speech2text.Transcriber;
 import lombok.extern.slf4j.Slf4j;
-
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 @Slf4j
 public class Controller {
 
