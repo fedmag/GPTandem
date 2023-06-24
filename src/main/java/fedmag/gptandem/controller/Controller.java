@@ -12,6 +12,8 @@ import fedmag.gptandem.services.speech2text.Transcriber;
 import fedmag.gptandem.ui.GUI;
 import lombok.extern.slf4j.Slf4j;
 import javax.swing.*;
+import java.io.IOException;
+
 @Slf4j
 public class Controller {
 
@@ -30,6 +32,7 @@ public class Controller {
         this.speech2text = new GoogleSpeechToText();
         this.microphoneService = new MicrophoneService();
         this.chatHistory = new ChatHistory();
+        chatHistory.addMessage(new Message("system", "you are an helpful assistant that is helping me learning " + language.getLongLanguageName() + " and will reply in such a language."));
         this.tandem = new ChatGPT();
         initController();
     }
@@ -70,14 +73,19 @@ public class Controller {
 
         gui.setSendButtonListener(e -> {
             log.info("Send button pressed");
-//            String transcription = speech2text.transcribe(microphoneService.getLastRecording(), this.sessionLanguage);
-            String transcription = "this is a fake transcription";
-            chatHistory.addMessage(new Message("federico", transcription));
+            String transcription = speech2text.transcribe(microphoneService.getLastRecording(), this.sessionLanguage);
+//            String transcription = "this is a fake transcription";
+            chatHistory.addMessage(new Message("user", transcription));
             // TODO maybe I want to pass the string directly?
             gui.displayChatHistory(chatHistory);
             // send to OpanAI
-            String reply = tandem.reply(chatHistory);
-            chatHistory.addMessage(new Message("AI", reply));
+            String reply = null;
+            try {
+                reply = tandem.reply(chatHistory);
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
+            chatHistory.addMessage(new Message("assistant", reply));
             gui.displayChatHistory(chatHistory);
         });
     }
