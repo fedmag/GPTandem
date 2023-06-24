@@ -17,10 +17,6 @@ public class MicrophoneService implements MicrophoneRecorder {
     @Getter
     private byte[] lastRecording;
 
-    public byte[] getRecording() {
-        return lastRecording;
-    }
-
     @Override
     public byte[] startRecording() {
         isRecording.set(true);

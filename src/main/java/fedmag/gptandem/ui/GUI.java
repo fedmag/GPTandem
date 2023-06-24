@@ -15,19 +15,11 @@ public class GUI extends JFrame{
     public GUI() {
         super();
         setContentPane(mainPanel);
-//        setupUI(); // this is not needed when using IntelliJ Grid Manager
         setTitle("GPTandem");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(600, 600);
         setLocationRelativeTo(null);
         setVisible(true);
-    }
-
-    private void setupUI() {
-        // Set the content pane explicitly
-        mainPanel.add(recordButton);
-        mainPanel.add(chatArea);
-        mainPanel.add(sendButton);
     }
 
     public void displayChatHistory(ChatHistory history) {
