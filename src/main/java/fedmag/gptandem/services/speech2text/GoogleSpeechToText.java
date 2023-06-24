@@ -12,12 +12,15 @@ import java.util.List;
 
 import com.google.protobuf.ByteString;
 import fedmag.gptandem.services.helper.Languages;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 @Slf4j
 public class GoogleSpeechToText implements Transcriber {
     SpeechClient speechClient;
+    @Getter
+    private String lastTranscription;
     public GoogleSpeechToText() {
         log.info("Creating GoogleSpeechToTextInstance..");
         this.speechClient = this.initClient();
@@ -52,6 +55,7 @@ public class GoogleSpeechToText implements Transcriber {
             // first (most likely) one here.
             SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
         }
+        lastTranscription = transcription;
         return transcription;
     }
 }
