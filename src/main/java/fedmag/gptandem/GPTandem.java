@@ -12,15 +12,7 @@ public class GPTandem {
         log.info("Hello and welcome!");
         log.info("Creating empty chat history..");
 
-        Controller controller = new Controller(Languages.ENGLISH);
-
-//        while (true) {
-//            // record if is not recording, not transcripting, not ...
-//            // transcript
-//            // call gpt
-//            // play sound
-//        }
-
+        Controller controller = new Controller(Languages.GERMAN);
 
     }
 }
