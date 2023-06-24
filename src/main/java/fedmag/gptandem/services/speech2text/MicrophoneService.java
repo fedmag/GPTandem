@@ -1,5 +1,6 @@
 package fedmag.gptandem.services.speech2text;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.sound.sampled.*;
@@ -13,6 +14,13 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class MicrophoneService implements MicrophoneRecorder {
 
     AtomicBoolean isRecording = new AtomicBoolean();
+    @Getter
+    private byte[] lastRecording;
+
+    public byte[] getRecording() {
+        return lastRecording;
+    }
+
     @Override
     public byte[] startRecording() {
         isRecording.set(true);
@@ -45,16 +53,19 @@ public class MicrophoneService implements MicrophoneRecorder {
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
 
-            Thread inputThread = getInputThread();
+//            Thread inputThread = getInputThread();
             // Start capturing audio from the microphone
-            int maxDuration = 30000;
+            int maxDuration = 10000;
             long startTime = System.currentTimeMillis();
+
             while (System.currentTimeMillis() - startTime < maxDuration && isRecording.get()) {
+                log.info("Time is over? {}", System.currentTimeMillis() - startTime < maxDuration);
+                log.info("isRecording? {}", isRecording.get());
                 int bytesRead = line.read(buffer, 0, buffer.length);
                 byteArrayOutputStream.write(buffer, 0, bytesRead);
             }
-            inputThread.join();
-
+//            inputThread.join();
+            log.info("Recording completed.. processing..");
             // Create an AudioInputStream from the captured audio data
             AudioInputStream audioInputStream = new AudioInputStream(new ByteArrayInputStream(
                     byteArrayOutputStream.toByteArray()),
@@ -72,38 +83,43 @@ public class MicrophoneService implements MicrophoneRecorder {
             outputStream.close();
             byteArrayOutputStream.close();
 
+            lastRecording = audioData;
             return audioData;
-        } catch (LineUnavailableException ex) {
+        } catch (LineUnavailableException | IOException ex) {
             log.error("Record service not available..");
             log.error(ex.getMessage());
-        } catch (InterruptedException | IOException e) {
-            throw new RuntimeException(e);
         }
         return null;
     }
 
-    private Thread getInputThread() {
-        Thread inputThread = new Thread(() -> {
-            try {
-                while (System.in.read() != 'q') {
-                    // Continue listening for key input
-                    System.out.println(isRecording.get());
-                }
-                System.out.println("The 'Q' key was pressed");
-                isRecording.set(false);
-                // Add your code to interrupt the while loop here
-            } catch (IOException e) {
-                log.error(e.getMessage());
-            }
-        });
-
-        // Start the input thread
-        inputThread.start();
-        return inputThread;
-    }
+//    private Thread getInputThread() {
+//        Thread inputThread = new Thread(() -> {
+//            try {
+//                while (System.in.read() != 'q') {
+//                    // Continue listening for key input
+//                    log.info(String.valueOf(isRecording.get()));
+//                }
+//                System.out.println("The 'Q' key was pressed");
+//                isRecording.set(false);
+//            } catch (IOException e) {
+//                log.error(e.getMessage());
+//            }
+//        });
+//
+//        // Start the input thread
+//        inputThread.start();
+//        return inputThread;
+//    }
 
     @Override
     public void stopRecording() {
+        log.info("Stopping recording");
         isRecording.set(false);
+        log.info("New is recording value: {}", isRecording.get());
+    }
+
+    @Override
+    public boolean isRecording() {
+        return this.isRecording.get();
     }
 }
