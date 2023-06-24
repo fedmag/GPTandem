@@ -3,6 +3,8 @@ package fedmag.gptandem.controller;
 import fedmag.gptandem.services.helper.ChatHistory;
 import fedmag.gptandem.services.helper.Languages;
 import fedmag.gptandem.services.helper.Message;
+import fedmag.gptandem.services.openai.ChatGPT;
+import fedmag.gptandem.services.openai.Tandem;
 import fedmag.gptandem.services.speech2text.GoogleSpeechToText;
 import fedmag.gptandem.services.speech2text.MicrophoneRecorder;
 import fedmag.gptandem.services.speech2text.MicrophoneService;
@@ -18,15 +20,17 @@ public class Controller {
     private final MicrophoneRecorder microphoneService;
     private final ChatHistory chatHistory;
     private Languages sessionLanguage;
-    //    private final Tandem tandem;
+    private final Tandem tandem;
 
 
     public Controller(Languages language) {
+        // TODO maybe we could even make all these parameters in the main?
         this.sessionLanguage = language;
         this.gui = new GUI();
         this.speech2text = new GoogleSpeechToText();
         this.microphoneService = new MicrophoneService();
         this.chatHistory = new ChatHistory();
+        this.tandem = new ChatGPT();
         initController();
     }
 
@@ -66,10 +70,14 @@ public class Controller {
 
         gui.setSendButtonListener(e -> {
             log.info("Send button pressed");
-            String transcription = speech2text.transcribe(microphoneService.getLastRecording(), this.sessionLanguage);
-//                String transcription = "speech2text.transcribe(lastRecord)";
+//            String transcription = speech2text.transcribe(microphoneService.getLastRecording(), this.sessionLanguage);
+            String transcription = "this is a fake transcription";
             chatHistory.addMessage(new Message("federico", transcription));
             // TODO maybe I want to pass the string directly?
+            gui.displayChatHistory(chatHistory);
+            // send to OpanAI
+            String reply = tandem.reply(chatHistory);
+            chatHistory.addMessage(new Message("AI", reply));
             gui.displayChatHistory(chatHistory);
         });
     }
