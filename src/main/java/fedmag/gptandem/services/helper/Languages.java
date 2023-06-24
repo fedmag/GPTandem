@@ -1,4 +1,4 @@
-package fedmag.gptandem.services.speech2text;
+package fedmag.gptandem.services.helper;
 
 import lombok.Getter;
 

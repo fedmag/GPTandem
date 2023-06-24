@@ -8,12 +8,10 @@ import com.google.cloud.speech.v1.SpeechClient;
 import com.google.cloud.speech.v1.SpeechRecognitionAlternative;
 import com.google.cloud.speech.v1.SpeechRecognitionResult;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 import com.google.protobuf.ByteString;
+import fedmag.gptandem.services.helper.Languages;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -40,11 +38,11 @@ public class GoogleSpeechToText implements Transcriber {
     }
 
     @Override
-    public String transcribe(byte[] record) {
+    public String transcribe(byte[] record, Languages language) {
         // Builds the sync recognize request
         RecognitionConfig config =
                 RecognitionConfig.newBuilder()
-                        .setLanguageCode(Languages.ENGLISH.getLanguage())
+                        .setLanguageCode(language.getLanguage())
                         .setAudioChannelCount(2)
                         .build();
         RecognitionAudio audio = RecognitionAudio.newBuilder().setContent(ByteString.copyFrom(record)).build();

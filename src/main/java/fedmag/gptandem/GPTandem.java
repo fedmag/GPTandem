@@ -1,4 +1,5 @@
 package fedmag.gptandem;
+import fedmag.gptandem.services.helper.Languages;
 import fedmag.gptandem.ui.Controller;
 import lombok.extern.slf4j.Slf4j;
 
@@ -11,7 +12,7 @@ public class GPTandem {
         log.info("Hello and welcome!");
         log.info("Creating empty chat history..");
 
-        Controller controller = new Controller();
+        Controller controller = new Controller(Languages.ENGLISH);
 
 //        while (true) {
 //            // record if is not recording, not transcripting, not ...

@@ -1,6 +1,7 @@
 package fedmag.gptandem.ui;
 
 import fedmag.gptandem.services.helper.ChatHistory;
+import fedmag.gptandem.services.helper.Languages;
 import fedmag.gptandem.services.helper.Message;
 import fedmag.gptandem.services.speech2text.GoogleSpeechToText;
 import fedmag.gptandem.services.speech2text.MicrophoneRecorder;
@@ -15,16 +16,20 @@ public class Controller {
     private final Transcriber speech2text;
     private final MicrophoneRecorder microphoneService;
     private final ChatHistory chatHistory;
+    private Languages sessionLanguage;
     //    private final Tandem tandem;
 
 
-    public Controller() {
+    public Controller(Languages language) {
+        this.sessionLanguage = language;
         this.gui = new GUI();
         this.speech2text = new GoogleSpeechToText();
         this.microphoneService = new MicrophoneService();
         this.chatHistory = new ChatHistory();
         initController();
     }
+
+    void setSessionLanguage(Languages newLanguage) {this.sessionLanguage = newLanguage;} // TODO need a dropdown to select the language, probably the controller should not encapsulate this logic but should be demanded to the individual components.
 
     public void initController() {
         gui.setRecordButtonListener( e -> {
@@ -60,7 +65,7 @@ public class Controller {
 
         gui.setSendButtonListener(e -> {
             log.info("Send button pressed");
-            String transcription = speech2text.transcribe(microphoneService.getLastRecording());
+            String transcription = speech2text.transcribe(microphoneService.getLastRecording(), this.sessionLanguage);
 //                String transcription = "speech2text.transcribe(lastRecord)";
             chatHistory.addMessage(new Message("federico", transcription));
             // TODO maybe I want to pass the string directly?

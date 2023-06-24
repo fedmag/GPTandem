@@ -1,6 +1,7 @@
 package fedmag.gptandem.services.speech2text;
 
-public interface Transcriber {
+import fedmag.gptandem.services.helper.Languages;
 
-    String transcribe(byte[] record);
+public interface Transcriber {
+    String transcribe(byte[] record, Languages language);
 }
