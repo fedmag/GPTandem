@@ -6,14 +6,14 @@ import lombok.extern.slf4j.Slf4j;
 import javax.swing.*;
 import java.awt.event.ActionListener;
 @Slf4j
-public class GUI extends JFrame{
+public class UI extends JFrame{
     private JButton recordButton;
     private JTextArea chatArea;
     private JButton sendButton;
     private JPanel mainPanel;
     private JTextArea stateArea;
 
-    public GUI() {
+    public UI() {
         super();
         setContentPane(mainPanel);
         setTitle("GPTandem");
