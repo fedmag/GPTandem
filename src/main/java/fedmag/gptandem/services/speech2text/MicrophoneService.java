@@ -43,7 +43,7 @@ public class MicrophoneService implements MicrophoneRecorder {
             System.out.println("Recording started...");
 
             // Create a new file to save the recorded audio
-            File audioFile = new File("recorded_audio.wav");
+            File audioFile = new File("recorded_audio.wav"); // TODO this can probably be deleted
 
             // Create a ByteArrayOutputStream to capture the audio data
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
