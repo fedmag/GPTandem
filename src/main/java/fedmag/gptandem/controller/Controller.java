@@ -78,13 +78,8 @@ public class Controller {
             chatHistory.addMessage(new Message("user", transcription));
             // TODO maybe I want to pass the string directly?
             gui.displayChatHistory(chatHistory);
-            // send to OpanAI
-            String reply = null;
-            try {
-                reply = tandem.reply(chatHistory);
-            } catch (IOException ex) {
-                throw new RuntimeException(ex);
-            }
+            // send to OpenAI
+            String reply = tandem.reply(chatHistory);
             chatHistory.addMessage(new Message("assistant", reply));
             gui.displayChatHistory(chatHistory);
         });
