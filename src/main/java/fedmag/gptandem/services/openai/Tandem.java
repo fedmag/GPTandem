@@ -4,4 +4,5 @@ import fedmag.gptandem.services.helper.ChatHistory;
 
 public interface Tandem {
     String reply(ChatHistory chatHistory);
+    String getLastReply();
 }
