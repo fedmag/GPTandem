@@ -1,11 +1,5 @@
 package fedmag.gptandem;
-
-import fedmag.gptandem.services.helper.ChatHistory;
-import fedmag.gptandem.services.helper.Message;
-import fedmag.gptandem.services.speech2text.GoogleSpeechToText;
-import fedmag.gptandem.services.speech2text.MicrophoneRecorder;
-import fedmag.gptandem.services.speech2text.MicrophoneService;
-import fedmag.gptandem.services.speech2text.Transcriber;
+import fedmag.gptandem.ui.Controller;
 import lombok.extern.slf4j.Slf4j;
 
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
@@ -16,15 +10,16 @@ public class GPTandem {
 
         log.info("Hello and welcome!");
         log.info("Creating empty chat history..");
-        ChatHistory chatHistory = new ChatHistory();
 
-        MicrophoneRecorder microphoneService = new MicrophoneService();
-        byte[] record = microphoneService.startRecording();
+        Controller controller = new Controller();
 
-        Transcriber speech2text = new GoogleSpeechToText();
-        String transcription = speech2text.transcribe(record);
-//        chatHistory.addMessage(new Message("user", transcription));
-        log.info(transcription);
+//        while (true) {
+//            // record if is not recording, not transcripting, not ...
+//            // transcript
+//            // call gpt
+//            // play sound
+//        }
+
 
     }
 }
