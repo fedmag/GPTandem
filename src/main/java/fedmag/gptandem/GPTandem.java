@@ -1,6 +1,6 @@
 package fedmag.gptandem;
 import fedmag.gptandem.services.helper.Languages;
-import fedmag.gptandem.ui.Controller;
+import fedmag.gptandem.controller.Controller;
 import lombok.extern.slf4j.Slf4j;
 
 // Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,

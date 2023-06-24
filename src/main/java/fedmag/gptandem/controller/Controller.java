@@ -1,4 +1,4 @@
-package fedmag.gptandem.ui;
+package fedmag.gptandem.controller;
 
 import fedmag.gptandem.services.helper.ChatHistory;
 import fedmag.gptandem.services.helper.Languages;
@@ -7,6 +7,7 @@ import fedmag.gptandem.services.speech2text.GoogleSpeechToText;
 import fedmag.gptandem.services.speech2text.MicrophoneRecorder;
 import fedmag.gptandem.services.speech2text.MicrophoneService;
 import fedmag.gptandem.services.speech2text.Transcriber;
+import fedmag.gptandem.ui.GUI;
 import lombok.extern.slf4j.Slf4j;
 import javax.swing.*;
 @Slf4j
