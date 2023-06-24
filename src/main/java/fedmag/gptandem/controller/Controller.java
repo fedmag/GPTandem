@@ -53,8 +53,6 @@ public class Controller {
                     protected Void doInBackground() throws Exception {
                         // Perform the long-lasting process here
                         // This will execute in the background thread
-
-                        gui.showLogMessage("Starting recording on second thread");
                         gui.setStateAreaText("Recording..");
                         microphoneService.startRecording();
                         return null;
@@ -64,8 +62,6 @@ public class Controller {
                     protected void done() {
                         // Executed on the EDT after the doInBackground() method completes
                         // Update the UI or perform any necessary post-processing
-
-                        gui.showLogMessage("Record captured!");
                         gui.setStateAreaText("Record captured!");
                         gui.setRecordButtonText("Record");
                     }
@@ -88,8 +84,6 @@ public class Controller {
                 protected Void doInBackground() throws Exception {
                     // Perform the long-lasting process here
                     // This will execute in the background thread
-
-                    gui.showLogMessage("Sending request to OpenAI using second thread");
                     gui.setStateAreaText("Waiting for response..");
                     tandem.reply(chatHistory);
                     return null;
@@ -99,8 +93,6 @@ public class Controller {
                 protected void done() {
                     // Executed on the EDT after the doInBackground() method completes
                     // Update the UI or perform any necessary post-processing
-
-                    gui.showLogMessage("Reply captured!");
                     gui.setStateAreaText("Reply captured!");
                     chatHistory.addMessage(new Message("assistant", tandem.getLastReply()));
                     gui.displayChatHistory(chatHistory);
