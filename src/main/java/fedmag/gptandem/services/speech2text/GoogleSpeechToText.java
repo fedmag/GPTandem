@@ -17,11 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 @Slf4j
 public class GoogleSpeechToText implements Transcriber {
-
-    static {
-        System.setProperty("java.util.logging.config.file", "C:\\Users\\maggi\\IdeaProjects\\GPTandem\\src\\main\\resources\\logging.properties");
-    }
-
     SpeechClient speechClient;
     public GoogleSpeechToText() {
         log.info("Creating GoogleSpeechToTextInstance..");

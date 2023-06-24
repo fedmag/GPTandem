@@ -40,7 +40,6 @@ public class MicrophoneService implements MicrophoneRecorder {
             line.start();
 
             byte[] buffer = new byte[4096];
-            System.out.println("Recording started...");
 
             // Create a new file to save the recorded audio
             File audioFile = new File("recorded_audio.wav"); // TODO this can probably be deleted
@@ -48,20 +47,15 @@ public class MicrophoneService implements MicrophoneRecorder {
             // Create a ByteArrayOutputStream to capture the audio data
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
-
-//            Thread inputThread = getInputThread();
-            // Start capturing audio from the microphone
             int maxDuration = 10000;
             long startTime = System.currentTimeMillis();
-
+            log.info("Recording started...");
             while (System.currentTimeMillis() - startTime < maxDuration && isRecording.get()) {
-                log.info("Time is over? {}", System.currentTimeMillis() - startTime < maxDuration);
-                log.info("isRecording? {}", isRecording.get());
                 int bytesRead = line.read(buffer, 0, buffer.length);
                 byteArrayOutputStream.write(buffer, 0, bytesRead);
             }
-//            inputThread.join();
-            log.info("Recording completed.. processing..");
+
+            log.info("..recording completed.. processing..");
             // Create an AudioInputStream from the captured audio data
             AudioInputStream audioInputStream = new AudioInputStream(new ByteArrayInputStream(
                     byteArrayOutputStream.toByteArray()),
@@ -80,6 +74,7 @@ public class MicrophoneService implements MicrophoneRecorder {
             byteArrayOutputStream.close();
 
             lastRecording = audioData;
+            log.info("..recording ready!");
             return audioData;
         } catch (LineUnavailableException | IOException ex) {
             log.error("Record service not available..");
@@ -87,25 +82,6 @@ public class MicrophoneService implements MicrophoneRecorder {
         }
         return null;
     }
-
-//    private Thread getInputThread() {
-//        Thread inputThread = new Thread(() -> {
-//            try {
-//                while (System.in.read() != 'q') {
-//                    // Continue listening for key input
-//                    log.info(String.valueOf(isRecording.get()));
-//                }
-//                System.out.println("The 'Q' key was pressed");
-//                isRecording.set(false);
-//            } catch (IOException e) {
-//                log.error(e.getMessage());
-//            }
-//        });
-//
-//        // Start the input thread
-//        inputThread.start();
-//        return inputThread;
-//    }
 
     @Override
     public void stopRecording() {

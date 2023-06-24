@@ -1,14 +1,19 @@
-package fedmag.gptandem.ui;
+package fedmag.gptandem.controller;
 
 import fedmag.gptandem.services.helper.ChatHistory;
 import fedmag.gptandem.services.helper.Languages;
 import fedmag.gptandem.services.helper.Message;
+import fedmag.gptandem.services.openai.ChatGPT;
+import fedmag.gptandem.services.openai.Tandem;
 import fedmag.gptandem.services.speech2text.GoogleSpeechToText;
 import fedmag.gptandem.services.speech2text.MicrophoneRecorder;
 import fedmag.gptandem.services.speech2text.MicrophoneService;
 import fedmag.gptandem.services.speech2text.Transcriber;
+import fedmag.gptandem.ui.GUI;
 import lombok.extern.slf4j.Slf4j;
 import javax.swing.*;
+import java.io.IOException;
+
 @Slf4j
 public class Controller {
 
@@ -17,15 +22,20 @@ public class Controller {
     private final MicrophoneRecorder microphoneService;
     private final ChatHistory chatHistory;
     private Languages sessionLanguage;
-    //    private final Tandem tandem;
+    private final Tandem tandem;
 
 
     public Controller(Languages language) {
+        // TODO maybe we could even make all these parameters in the main?
         this.sessionLanguage = language;
         this.gui = new GUI();
         this.speech2text = new GoogleSpeechToText();
         this.microphoneService = new MicrophoneService();
         this.chatHistory = new ChatHistory();
+        chatHistory.addMessage(new Message(
+                "system",
+                "you are an helpful tandem partner that is helping me learning " + language.getLongLanguageName() + " and will reply in such a language."));
+        this.tandem = new ChatGPT();
         initController();
     }
 
@@ -66,10 +76,33 @@ public class Controller {
         gui.setSendButtonListener(e -> {
             log.info("Send button pressed");
             String transcription = speech2text.transcribe(microphoneService.getLastRecording(), this.sessionLanguage);
-//                String transcription = "speech2text.transcribe(lastRecord)";
-            chatHistory.addMessage(new Message("federico", transcription));
+//            String transcription = "this is a fake transcription";
+            chatHistory.addMessage(new Message("user", transcription));
             // TODO maybe I want to pass the string directly?
             gui.displayChatHistory(chatHistory);
+            // send to OpenAI
+            SwingWorker<Void, Void> worker = new SwingWorker<>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                    // Perform the long-lasting process here
+                    // This will execute in the background thread
+
+                    gui.showLogMessage("Sending request to OpenAI using second thread");
+                    tandem.reply(chatHistory);
+                    return null;
+                }
+
+                @Override
+                protected void done() {
+                    // Executed on the EDT after the doInBackground() method completes
+                    // Update the UI or perform any necessary post-processing
+
+                    gui.showLogMessage("Reply captured!");
+                    chatHistory.addMessage(new Message("assistant", tandem.getLastReply()));
+                    gui.displayChatHistory(chatHistory);
+                }
+            };
+            worker.execute();
         });
     }
 

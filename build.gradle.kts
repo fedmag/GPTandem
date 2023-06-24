@@ -10,8 +10,8 @@ repositories {
 }
 
 dependencies {
-    implementation("com.squareup.okhttp:okhttp:2.7.5")
     implementation("com.google.cloud:google-cloud-speech:4.14.0")
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
 
     compileOnly("org.projectlombok:lombok:1.18.28")
     annotationProcessor("org.projectlombok:lombok:1.18.28")
