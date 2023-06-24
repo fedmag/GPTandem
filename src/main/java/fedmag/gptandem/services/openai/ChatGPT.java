@@ -2,6 +2,7 @@ package fedmag.gptandem.services.openai;
 
 import com.google.gson.*;
 import fedmag.gptandem.services.helper.ChatHistory;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import java.io.IOException;
@@ -13,6 +14,9 @@ public class ChatGPT implements Tandem {
     private final OkHttpClient client;
     private final String openAiUrl = "https://api.openai.com/v1/chat/completions";
     private String chatGptVersion = "gpt-3.5-turbo";
+
+    @Getter
+    private String lastReply;
     public static final MediaType JSON = MediaType.get("application/json");
 
     public ChatGPT() {
@@ -33,7 +37,8 @@ public class ChatGPT implements Tandem {
                 .build();
         try (Response response = client.newCall(request).execute()) {
             assert response.body() != null;
-            return getMessageFromReply(response.body().string());
+            lastReply = getMessageFromReply(response.body().string());
+            return lastReply;
         } catch (IOException e) {
             log.error("Unable to perform the request: {}", e.getMessage());
             throw new RuntimeException(e);
@@ -47,7 +52,7 @@ public class ChatGPT implements Tandem {
         JsonElement jsonElement = choices.get(0);
         JsonObject jsonObject = jsonElement.getAsJsonObject();
         JsonObject message = jsonObject.getAsJsonObject("message");
-        return String.valueOf(message.get("content"));
+        return String.valueOf(message.get("content")).replaceAll("[\\r\\n]+", "");
     }
 
     private String prepareJson(ChatHistory chatHistory) {

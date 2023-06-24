@@ -32,7 +32,9 @@ public class Controller {
         this.speech2text = new GoogleSpeechToText();
         this.microphoneService = new MicrophoneService();
         this.chatHistory = new ChatHistory();
-        chatHistory.addMessage(new Message("system", "you are an helpful assistant that is helping me learning " + language.getLongLanguageName() + " and will reply in such a language."));
+        chatHistory.addMessage(new Message(
+                "system",
+                "you are an helpful tandem partner that is helping me learning " + language.getLongLanguageName() + " and will reply in such a language."));
         this.tandem = new ChatGPT();
         initController();
     }
@@ -79,9 +81,28 @@ public class Controller {
             // TODO maybe I want to pass the string directly?
             gui.displayChatHistory(chatHistory);
             // send to OpenAI
-            String reply = tandem.reply(chatHistory);
-            chatHistory.addMessage(new Message("assistant", reply));
-            gui.displayChatHistory(chatHistory);
+            SwingWorker<Void, Void> worker = new SwingWorker<>() {
+                @Override
+                protected Void doInBackground() throws Exception {
+                    // Perform the long-lasting process here
+                    // This will execute in the background thread
+
+                    gui.showLogMessage("Sending request to OpenAI using second thread");
+                    tandem.reply(chatHistory);
+                    return null;
+                }
+
+                @Override
+                protected void done() {
+                    // Executed on the EDT after the doInBackground() method completes
+                    // Update the UI or perform any necessary post-processing
+
+                    gui.showLogMessage("Reply captured!");
+                    chatHistory.addMessage(new Message("assistant", tandem.getLastReply()));
+                    gui.displayChatHistory(chatHistory);
+                }
+            };
+            worker.execute();
         });
     }
 
