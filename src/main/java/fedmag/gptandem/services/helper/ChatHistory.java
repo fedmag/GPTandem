@@ -1,5 +1,8 @@
 package fedmag.gptandem.services.helper;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonSerializationContext;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,10 +23,8 @@ public class ChatHistory {
     public String toString() {
         String result = "";
         for (Message message: chatHistory) {
-            log.info("Looking at message: {}", message);
-            result = result.concat("\n" + message.author + ": " + message.content);
+            result = result.concat("\n" + message.role + ": " + message.content);
         }
-        log.info("ChatHistory to string: {}", result);
         return result;
     }
 }
