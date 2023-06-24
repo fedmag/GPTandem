@@ -13,6 +13,9 @@ dependencies {
     implementation("com.google.cloud:google-cloud-speech:4.14.0")
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
 
+    // ui
+    implementation("com.formdev:flatlaf:3.1.1")
+
     compileOnly("org.projectlombok:lombok:1.18.28")
     annotationProcessor("org.projectlombok:lombok:1.18.28")
 

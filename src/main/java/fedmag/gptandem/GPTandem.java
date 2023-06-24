@@ -1,4 +1,6 @@
 package fedmag.gptandem;
+import com.formdev.flatlaf.FlatDarkLaf;
+import com.formdev.flatlaf.FlatLightLaf;
 import fedmag.gptandem.services.helper.Languages;
 import fedmag.gptandem.controller.Controller;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,8 @@ public class GPTandem {
 
         log.info("Hello and welcome!");
         log.info("Creating empty chat history..");
+
+        FlatDarkLaf.setup();
 
         Controller controller = new Controller(Languages.GERMAN);
 
