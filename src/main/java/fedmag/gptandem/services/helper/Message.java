@@ -6,6 +6,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class Message {
-    String author;
+    String role;
     String content;
 }

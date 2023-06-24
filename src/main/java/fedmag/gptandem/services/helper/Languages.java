@@ -4,13 +4,15 @@ import lombok.Getter;
 
 @Getter
 public enum Languages {
-    ENGLISH("en-US"),
-    GERMAN("de-DE"),
-    ITALIAN("it-IT");
+    ENGLISH("en-US", "English"),
+    GERMAN("de-DE", "German"),
+    ITALIAN("it-IT", "Italian");
 
     private final String language;
+    private final String longLanguageName;
 
-    Languages(String language) {
+    Languages(String language, String longLanguageName) {
         this.language = language;
+        this.longLanguageName = longLanguageName;
     }
 }
