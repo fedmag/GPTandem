@@ -11,6 +11,7 @@ public class GUI extends JFrame{
     private JTextArea chatArea;
     private JButton sendButton;
     private JPanel mainPanel;
+    private JTextArea stateArea;
 
     public GUI() {
         super();
@@ -40,5 +41,7 @@ public class GUI extends JFrame{
     public void setRecordButtonText(String newText) {
         recordButton.setText(newText);
     }
+
+    public void setStateAreaText(String text) {stateArea.setText(text);}
 
 }

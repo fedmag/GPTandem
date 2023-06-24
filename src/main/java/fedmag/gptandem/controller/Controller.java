@@ -55,6 +55,7 @@ public class Controller {
                         // This will execute in the background thread
 
                         gui.showLogMessage("Starting recording on second thread");
+                        gui.setStateAreaText("Recording..");
                         microphoneService.startRecording();
                         return null;
                     }
@@ -65,6 +66,7 @@ public class Controller {
                         // Update the UI or perform any necessary post-processing
 
                         gui.showLogMessage("Record captured!");
+                        gui.setStateAreaText("Record captured!");
                         gui.setRecordButtonText("Record");
                     }
                 };
@@ -75,8 +77,8 @@ public class Controller {
 
         gui.setSendButtonListener(e -> {
             log.info("Send button pressed");
+            gui.setStateAreaText("Transcribing..");
             String transcription = speech2text.transcribe(microphoneService.getLastRecording(), this.sessionLanguage);
-//            String transcription = "this is a fake transcription";
             chatHistory.addMessage(new Message("user", transcription));
             // TODO maybe I want to pass the string directly?
             gui.displayChatHistory(chatHistory);
@@ -88,6 +90,7 @@ public class Controller {
                     // This will execute in the background thread
 
                     gui.showLogMessage("Sending request to OpenAI using second thread");
+                    gui.setStateAreaText("Waiting for response..");
                     tandem.reply(chatHistory);
                     return null;
                 }
@@ -98,6 +101,7 @@ public class Controller {
                     // Update the UI or perform any necessary post-processing
 
                     gui.showLogMessage("Reply captured!");
+                    gui.setStateAreaText("Reply captured!");
                     chatHistory.addMessage(new Message("assistant", tandem.getLastReply()));
                     gui.displayChatHistory(chatHistory);
                 }
@@ -105,11 +109,4 @@ public class Controller {
             worker.execute();
         });
     }
-
-
-//    byte[] record = microphoneService.startRecording();
-
-//    String transcription = speech2text.transcribe(record);
-//    chatHistory.addMessage(new Message("user", transcription));
-//    log.info(transcription);
 }
