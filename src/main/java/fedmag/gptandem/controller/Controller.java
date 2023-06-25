@@ -39,6 +39,7 @@ public class Controller {
                 "you are an helpful tandem partner that is helping me learning " + language.getLongLanguageName() + " and will reply in such a language."));
         this.tandem = new ChatGPT();
         this.speaker = new GoogleTextToSpeech();
+
         initController();
     }
 
@@ -121,8 +122,30 @@ public class Controller {
                 ui.setStateAreaText("Reply captured!");
                 chatHistory.addMessage(new Message("assistant", tandem.getLastReply()));
                 ui.displayChatHistory(chatHistory);
+                startSpeakTask();
             }
         };
         aiWorker.execute();
+    }
+
+    private void startSpeakTask() {
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() {
+                // Perform the long-lasting process here
+                // This will execute in the background thread
+                ui.setStateAreaText("Speaking");
+                speaker.speak(tandem.getLastReply(), sessionLanguage);
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                // Executed on the EDT after the doInBackground() method completes
+                // Update the UI or perform any necessary post-processing
+                ui.setStateAreaText("Waiting for new inputs!");
+            }
+        };
+        worker.execute();
     }
 }
