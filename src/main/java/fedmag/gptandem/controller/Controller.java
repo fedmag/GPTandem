@@ -48,9 +48,12 @@ public class Controller {
     public void initController() {
         ui.setStateAreaText("Press the \"Record\" when ready!");
         ui.setSendButtonActive(false);
+        ui.setRepeatLastButtonActive(false);
+
         ui.setRecordButtonListener(e -> {
             log.info("Record button pressed");
             ui.setSendButtonActive(false);
+            ui.setRepeatLastButtonActive(false);
 
             if (microphoneService.isRecording()) {
                 microphoneService.stopRecording();
@@ -62,6 +65,7 @@ public class Controller {
                         // Perform the long-lasting process here
                         // This will execute in the background thread
                         ui.setStateAreaText("Recording..");
+                        ui.setRepeatLastButtonActive(false);
                         microphoneService.startRecording();
                         return null;
                     }
@@ -83,6 +87,7 @@ public class Controller {
             log.info("Send button pressed");
             ui.setRecordButtonActive(false);
             ui.setSendButtonActive(false);
+            ui.setRepeatLastButtonActive(false);
             // send to OpenAI
             startTranscriptionTask();
         });
@@ -97,8 +102,8 @@ public class Controller {
         SwingWorker<Void, Void> transcribeWorker = new SwingWorker<>() {
             @Override
             protected Void doInBackground() {
-
                 ui.setStateAreaText("Transcribing..");
+                ui.setRepeatLastButtonActive(false);
                 speech2text.transcribe(microphoneService.getLastRecording(), sessionLanguage);
                 return null;
             }
@@ -121,6 +126,7 @@ public class Controller {
                 // Perform the long-lasting process here
                 // This will execute in the background thread
                 ui.setStateAreaText("Waiting for response..");
+                ui.setRepeatLastButtonActive(false);
                 tandem.reply(chatHistory);
                 return null;
             }
@@ -145,6 +151,7 @@ public class Controller {
                 // Perform the long-lasting process here
                 // This will execute in the background thread
                 ui.setStateAreaText("Speaking...");
+                ui.setRepeatLastButtonActive(false);
                 speaker.speak(tandem.getLastReply(), sessionLanguage);
                 return null;
             }
@@ -155,6 +162,7 @@ public class Controller {
                 // Update the UI or perform any necessary post-processing
                 ui.setStateAreaText("Waiting for new inputs!");
                 ui.setRecordButtonActive(true);
+                ui.setRepeatLastButtonActive(true);
             }
         };
         worker.execute();

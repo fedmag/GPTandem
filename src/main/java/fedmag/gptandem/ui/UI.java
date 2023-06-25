@@ -13,6 +13,9 @@ public class UI extends JFrame{
     private JPanel mainPanel;
     private JTextArea stateArea;
     private JButton repeatLast;
+    private JPanel controlPanel;
+    private JScrollPane chatPanel;
+    private JPanel topPanel;
 
     public UI() {
         super();
@@ -51,7 +54,7 @@ public class UI extends JFrame{
         sendButton.setEnabled(active);
     }
     public void setRepeatLastButtonActive(boolean active) {
-        sendButton.setEnabled(active);
+        repeatLast.setEnabled(active);
     }
 
 }
