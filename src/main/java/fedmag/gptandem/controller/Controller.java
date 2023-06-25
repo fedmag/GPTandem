@@ -46,10 +46,12 @@ public class Controller {
     void setSessionLanguage(Languages newLanguage) {this.sessionLanguage = newLanguage;} // TODO need a dropdown to select the language, probably the controller should not encapsulate this logic but should be demanded to the individual components.
 
     public void initController() {
-        ui.setStateAreaText("Press the \"Record\" button when ready to talk with your tandem!");
-
+        ui.setStateAreaText("Press the \"Record\" when ready!");
+        ui.setSendButtonActive(false);
         ui.setRecordButtonListener(e -> {
             log.info("Record button pressed");
+            ui.setSendButtonActive(false);
+
             if (microphoneService.isRecording()) {
                 microphoneService.stopRecording();
             } else {
@@ -70,6 +72,7 @@ public class Controller {
                         // Update the UI or perform any necessary post-processing
                         ui.setStateAreaText("Record captured!");
                         ui.setRecordButtonText("Record");
+                        ui.setSendButtonActive(true);
                     }
                 };
                 worker.execute();
@@ -78,6 +81,8 @@ public class Controller {
 
         ui.setSendButtonListener(e -> {
             log.info("Send button pressed");
+            ui.setRecordButtonActive(false);
+            ui.setSendButtonActive(false);
             // send to OpenAI
             startTranscriptionTask();
         });
@@ -134,7 +139,7 @@ public class Controller {
             protected Void doInBackground() {
                 // Perform the long-lasting process here
                 // This will execute in the background thread
-                ui.setStateAreaText("Speaking");
+                ui.setStateAreaText("Speaking...");
                 speaker.speak(tandem.getLastReply(), sessionLanguage);
                 return null;
             }
@@ -144,8 +149,10 @@ public class Controller {
                 // Executed on the EDT after the doInBackground() method completes
                 // Update the UI or perform any necessary post-processing
                 ui.setStateAreaText("Waiting for new inputs!");
+                ui.setRecordButtonActive(true);
             }
         };
         worker.execute();
+
     }
 }

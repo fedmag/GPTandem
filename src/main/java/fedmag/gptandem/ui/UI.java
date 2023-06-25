@@ -33,15 +33,18 @@ public class UI extends JFrame{
     public void setSendButtonListener(ActionListener listener) {
         sendButton.addActionListener(listener);
     }
-
     public void showLogMessage(String message) {
         chatArea.append("\n LOG: " + message + "\n" );
     }
-
     public void setRecordButtonText(String newText) {
         recordButton.setText(newText);
     }
-
     public void setStateAreaText(String text) {stateArea.setText(text);}
+    public void setRecordButtonActive(boolean active) {
+        recordButton.setEnabled(active);
+    }
+    public void setSendButtonActive(boolean active) {
+        sendButton.setEnabled(active);
+    }
 
 }
