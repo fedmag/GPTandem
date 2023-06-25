@@ -86,6 +86,11 @@ public class Controller {
             // send to OpenAI
             startTranscriptionTask();
         });
+
+        ui.setRepeatLastButtonListener(e -> {
+            log.info("Repeating last sentence..");
+            startRepeatTask();
+        });
     }
 
     private void startTranscriptionTask() {
@@ -153,6 +158,30 @@ public class Controller {
             }
         };
         worker.execute();
+    }
 
+    private void startRepeatTask() {
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() {
+                // Perform the long-lasting process here
+                // This will execute in the background thread
+                ui.setStateAreaText("Repeating...");
+                ui.setSendButtonActive(false);
+                ui.setRepeatLastButtonActive(false);
+                speaker.repeatLast();
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                // Executed on the EDT after the doInBackground() method completes
+                // Update the UI or perform any necessary post-processing
+                ui.setStateAreaText("Waiting for new inputs!");
+                ui.setRepeatLastButtonActive(true);
+                ui.setRecordButtonActive(true);
+            }
+        };
+        worker.execute();
     }
 }

@@ -13,6 +13,7 @@ import java.io.*;
 public class GoogleTextToSpeech implements Speaker {
     private final TextToSpeechClient client;
     private final AudioConfig audioConfig;
+    private InputStream lastSound;
 
     public GoogleTextToSpeech() {
         try {
@@ -21,17 +22,24 @@ public class GoogleTextToSpeech implements Speaker {
             log.error("Unable to initialize the client! {}", e.getMessage());
             throw new RuntimeException(e);
         }
-
         // Select the type of audio file you want returned
         audioConfig = AudioConfig.newBuilder()
                         .setAudioEncoding(AudioEncoding.MP3) // MP3 audio.
                         .build();
-
     }
 
     @Override
     public void speak(String text, Languages language) {
         synthesizeText(text, language);
+    }
+
+    @Override
+    public void repeatLast() {
+        if (lastSound != null) {
+            playAudio(lastSound);
+        } else {
+            log.error("Last sound is null.");
+        }
     }
 
     /**
@@ -62,6 +70,7 @@ public class GoogleTextToSpeech implements Speaker {
         ByteString audioContents = response.getAudioContent();
 
         playAudio(new ByteArrayInputStream(audioContents.toByteArray()));
+        lastSound = new ByteArrayInputStream(audioContents.toByteArray());
         return audioContents;
     }
 

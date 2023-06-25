@@ -1,6 +1,7 @@
 package fedmag.gptandem;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatLightLaf;
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
 import fedmag.gptandem.services.helper.Languages;
 import fedmag.gptandem.controller.Controller;
 import fedmag.gptandem.utility.ConfigManager;
@@ -15,10 +16,10 @@ public class GPTandem {
         log.info("Hello and welcome!");
         log.info("Creating empty chat history..");
 
-        FlatDarkLaf.setup();
+        FlatMacLightLaf.setup();
 
         ConfigManager configManager = ConfigManager.getInstance();
-        Controller controller = new Controller(Languages.ENGLISH);
+        Controller controller = new Controller(Languages.GERMAN);
 
     }
 }

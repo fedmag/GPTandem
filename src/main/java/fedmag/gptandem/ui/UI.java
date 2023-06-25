@@ -12,6 +12,7 @@ public class UI extends JFrame{
     private JButton sendButton;
     private JPanel mainPanel;
     private JTextArea stateArea;
+    private JButton repeatLast;
 
     public UI() {
         super();
@@ -24,7 +25,7 @@ public class UI extends JFrame{
     }
 
     public void displayChatHistory(ChatHistory history) {
-        log.info("Setting text to: {}", history.toString());
+        log.debug("Setting text to: {}", history.toString());
         chatArea.setText(history.toString());
     }
     public void setRecordButtonListener(ActionListener listener) {
@@ -32,6 +33,9 @@ public class UI extends JFrame{
     }
     public void setSendButtonListener(ActionListener listener) {
         sendButton.addActionListener(listener);
+    }
+    public void setRepeatLastButtonListener(ActionListener listener) {
+        repeatLast.addActionListener(listener);
     }
     public void showLogMessage(String message) {
         chatArea.append("\n LOG: " + message + "\n" );
@@ -44,6 +48,9 @@ public class UI extends JFrame{
         recordButton.setEnabled(active);
     }
     public void setSendButtonActive(boolean active) {
+        sendButton.setEnabled(active);
+    }
+    public void setRepeatLastButtonActive(boolean active) {
         sendButton.setEnabled(active);
     }
 

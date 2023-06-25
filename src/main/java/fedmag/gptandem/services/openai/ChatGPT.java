@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import java.io.IOException;
+import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class ChatGPT implements Tandem {
@@ -22,8 +24,7 @@ public class ChatGPT implements Tandem {
     public ChatGPT() {
         this.apiKey = System.getenv("OPENAI_KEY");
         log.info("OpenAI key: {}", apiKey);
-        client = new OkHttpClient();
-
+        client = new OkHttpClient.Builder().connectTimeout(Duration.ofSeconds(30)).build();
     }
 
     @Override
@@ -41,8 +42,9 @@ public class ChatGPT implements Tandem {
             return lastReply;
         } catch (IOException e) {
             log.error("Unable to perform the request: {}", e.getMessage());
-            throw new RuntimeException(e);
+            lastReply = "Last request did not succeeded as OpenAI failed to respond!";
         }
+        return null;
     }
 
     private String getMessageFromReply(String string) {
@@ -55,7 +57,7 @@ public class ChatGPT implements Tandem {
         String content = String.valueOf(message.get("content")).replaceAll("[\\r\\n]+", "");
 
         if ( content.isBlank() || content.equals("null")) log.error("Content in the reply seems null: {}", object);
-        return String.valueOf(message.get("content")).replaceAll("[\\r\\n]+", "");
+        return content;
     }
 
     private String prepareJson(ChatHistory chatHistory) {
