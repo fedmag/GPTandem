@@ -49,12 +49,13 @@ public class GoogleSpeechToText implements Transcriber {
         RecognizeResponse response = speechClient.recognize(config, audio); // this blocks till the response comes.
         List<SpeechRecognitionResult> results = response.getResultsList();
         if (results.isEmpty()) log.error("0 results have been returned...");
-        String transcription = results.get(0).getAlternativesList().get(0).getTranscript();;
-        for (SpeechRecognitionResult result : results) {
-            // There can be several alternative transcripts for a given chunk of speech. Just use the
-            // first (most likely) one here.
-            SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
-        }
+        String transcription = results.get(0).getAlternativesList().get(0).getTranscript();
+        // TODO in the future might allow the user to select the best transcription
+//        for (SpeechRecognitionResult result : results) {
+//            // There can be several alternative transcripts for a given chunk of speech. Just use the
+//            // first (most likely) one here.
+//            SpeechRecognitionAlternative alternative = result.getAlternativesList().get(0);
+//        }
         lastTranscription = transcription;
         return transcription;
     }

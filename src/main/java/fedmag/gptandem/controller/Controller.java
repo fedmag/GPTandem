@@ -9,6 +9,8 @@ import fedmag.gptandem.services.speech2text.GoogleSpeechToText;
 import fedmag.gptandem.services.speech2text.MicrophoneRecorder;
 import fedmag.gptandem.services.speech2text.MicrophoneService;
 import fedmag.gptandem.services.speech2text.Transcriber;
+import fedmag.gptandem.services.text2speech.GoogleTextToSpeech;
+import fedmag.gptandem.services.text2speech.Speaker;
 import fedmag.gptandem.ui.UI;
 import lombok.extern.slf4j.Slf4j;
 import javax.swing.*;
@@ -22,6 +24,7 @@ public class Controller {
     private final ChatHistory chatHistory;
     private Languages sessionLanguage;
     private final Tandem tandem;
+    private final Speaker speaker;
 
 
     public Controller(Languages language) {
@@ -35,16 +38,20 @@ public class Controller {
                 "system",
                 "you are an helpful tandem partner that is helping me learning " + language.getLongLanguageName() + " and will reply in such a language."));
         this.tandem = new ChatGPT();
+        this.speaker = new GoogleTextToSpeech();
+
         initController();
     }
 
     void setSessionLanguage(Languages newLanguage) {this.sessionLanguage = newLanguage;} // TODO need a dropdown to select the language, probably the controller should not encapsulate this logic but should be demanded to the individual components.
 
     public void initController() {
-        ui.setStateAreaText("Press the \"Record\" button when ready to talk with your tandem!");
-
+        ui.setStateAreaText("Press the \"Record\" when ready!");
+        ui.setSendButtonActive(false);
         ui.setRecordButtonListener(e -> {
             log.info("Record button pressed");
+            ui.setSendButtonActive(false);
+
             if (microphoneService.isRecording()) {
                 microphoneService.stopRecording();
             } else {
@@ -65,6 +72,7 @@ public class Controller {
                         // Update the UI or perform any necessary post-processing
                         ui.setStateAreaText("Record captured!");
                         ui.setRecordButtonText("Record");
+                        ui.setSendButtonActive(true);
                     }
                 };
                 worker.execute();
@@ -73,6 +81,8 @@ public class Controller {
 
         ui.setSendButtonListener(e -> {
             log.info("Send button pressed");
+            ui.setRecordButtonActive(false);
+            ui.setSendButtonActive(false);
             // send to OpenAI
             startTranscriptionTask();
         });
@@ -117,8 +127,32 @@ public class Controller {
                 ui.setStateAreaText("Reply captured!");
                 chatHistory.addMessage(new Message("assistant", tandem.getLastReply()));
                 ui.displayChatHistory(chatHistory);
+                startSpeakTask();
             }
         };
         aiWorker.execute();
+    }
+
+    private void startSpeakTask() {
+        SwingWorker<Void, Void> worker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() {
+                // Perform the long-lasting process here
+                // This will execute in the background thread
+                ui.setStateAreaText("Speaking...");
+                speaker.speak(tandem.getLastReply(), sessionLanguage);
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                // Executed on the EDT after the doInBackground() method completes
+                // Update the UI or perform any necessary post-processing
+                ui.setStateAreaText("Waiting for new inputs!");
+                ui.setRecordButtonActive(true);
+            }
+        };
+        worker.execute();
+
     }
 }
