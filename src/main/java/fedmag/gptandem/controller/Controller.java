@@ -9,6 +9,8 @@ import fedmag.gptandem.services.speech2text.GoogleSpeechToText;
 import fedmag.gptandem.services.speech2text.MicrophoneRecorder;
 import fedmag.gptandem.services.speech2text.MicrophoneService;
 import fedmag.gptandem.services.speech2text.Transcriber;
+import fedmag.gptandem.services.text2speech.GoogleTextToSpeech;
+import fedmag.gptandem.services.text2speech.Speaker;
 import fedmag.gptandem.ui.GUI;
 import lombok.extern.slf4j.Slf4j;
 import javax.swing.*;
@@ -23,6 +25,7 @@ public class Controller {
     private final ChatHistory chatHistory;
     private Languages sessionLanguage;
     private final Tandem tandem;
+    private final Speaker speaker;
 
 
     public Controller(Languages language) {
@@ -36,6 +39,7 @@ public class Controller {
                 "system",
                 "you are an helpful tandem partner that is helping me learning " + language.getLongLanguageName() + " and will reply in such a language."));
         this.tandem = new ChatGPT();
+        this.speaker = new GoogleTextToSpeech();
         initController();
     }
 

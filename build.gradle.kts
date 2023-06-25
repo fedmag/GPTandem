@@ -10,7 +10,11 @@ repositories {
 }
 
 dependencies {
+    // speech2text
     implementation("com.google.cloud:google-cloud-speech:4.14.0")
+    // text2speech
+    implementation("com.google.cloud:google-cloud-texttospeech:2.21.0")
+    // http client
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
 
     compileOnly("org.projectlombok:lombok:1.18.28")
