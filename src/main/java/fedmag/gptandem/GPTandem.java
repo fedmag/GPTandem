@@ -18,7 +18,7 @@ public class GPTandem {
         FlatDarkLaf.setup();
 
         ConfigManager configManager = ConfigManager.getInstance();
-        Controller controller = new Controller(Languages.GERMAN);
+        Controller controller = new Controller(Languages.ENGLISH);
 
     }
 }
