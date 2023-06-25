@@ -47,7 +47,7 @@ public class MicrophoneService implements MicrophoneRecorder {
             // Create a ByteArrayOutputStream to capture the audio data
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
-            int maxDuration = 10000;
+            int maxDuration = 30000;
             long startTime = System.currentTimeMillis();
             log.info("Recording started...");
             while (System.currentTimeMillis() - startTime < maxDuration && isRecording.get()) {

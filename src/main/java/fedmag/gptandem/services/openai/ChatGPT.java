@@ -14,9 +14,9 @@ public class ChatGPT implements Tandem {
     private final OkHttpClient client;
     private final String openAiUrl = "https://api.openai.com/v1/chat/completions";
     private String chatGptVersion = "gpt-3.5-turbo";
-
     @Getter
     private String lastReply;
+
     public static final MediaType JSON = MediaType.get("application/json");
 
     public ChatGPT() {
@@ -52,6 +52,9 @@ public class ChatGPT implements Tandem {
         JsonElement jsonElement = choices.get(0);
         JsonObject jsonObject = jsonElement.getAsJsonObject();
         JsonObject message = jsonObject.getAsJsonObject("message");
+        String content = String.valueOf(message.get("content")).replaceAll("[\\r\\n]+", "");
+
+        if ( content.isBlank() || content.equals("null")) log.error("Content in the reply seems null: {}", object);
         return String.valueOf(message.get("content")).replaceAll("[\\r\\n]+", "");
     }
 

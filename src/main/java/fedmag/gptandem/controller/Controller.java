@@ -9,15 +9,14 @@ import fedmag.gptandem.services.speech2text.GoogleSpeechToText;
 import fedmag.gptandem.services.speech2text.MicrophoneRecorder;
 import fedmag.gptandem.services.speech2text.MicrophoneService;
 import fedmag.gptandem.services.speech2text.Transcriber;
-import fedmag.gptandem.ui.GUI;
+import fedmag.gptandem.ui.UI;
 import lombok.extern.slf4j.Slf4j;
 import javax.swing.*;
-import java.io.IOException;
 
 @Slf4j
 public class Controller {
 
-    private final GUI gui;
+    private final UI ui;
     private final Transcriber speech2text;
     private final MicrophoneRecorder microphoneService;
     private final ChatHistory chatHistory;
@@ -28,7 +27,7 @@ public class Controller {
     public Controller(Languages language) {
         // TODO maybe we could even make all these parameters in the main?
         this.sessionLanguage = language;
-        this.gui = new GUI();
+        this.ui = new UI();
         this.speech2text = new GoogleSpeechToText();
         this.microphoneService = new MicrophoneService();
         this.chatHistory = new ChatHistory();
@@ -42,19 +41,20 @@ public class Controller {
     void setSessionLanguage(Languages newLanguage) {this.sessionLanguage = newLanguage;} // TODO need a dropdown to select the language, probably the controller should not encapsulate this logic but should be demanded to the individual components.
 
     public void initController() {
-        gui.setRecordButtonListener( e -> {
+        ui.setStateAreaText("Press the \"Record\" button when ready to talk with your tandem!");
+
+        ui.setRecordButtonListener(e -> {
             log.info("Record button pressed");
             if (microphoneService.isRecording()) {
                 microphoneService.stopRecording();
             } else {
-                gui.setRecordButtonText("Stop");
+                ui.setRecordButtonText("Stop");
                 SwingWorker<Void, Void> worker = new SwingWorker<>() {
                     @Override
                     protected Void doInBackground() throws Exception {
                         // Perform the long-lasting process here
                         // This will execute in the background thread
-
-                        gui.showLogMessage("Starting recording on second thread");
+                        ui.setStateAreaText("Recording..");
                         microphoneService.startRecording();
                         return null;
                     }
@@ -63,53 +63,62 @@ public class Controller {
                     protected void done() {
                         // Executed on the EDT after the doInBackground() method completes
                         // Update the UI or perform any necessary post-processing
-
-                        gui.showLogMessage("Record captured!");
-                        gui.setRecordButtonText("Record");
+                        ui.setStateAreaText("Record captured!");
+                        ui.setRecordButtonText("Record");
                     }
                 };
-
                 worker.execute();
             }
         });
 
-        gui.setSendButtonListener(e -> {
+        ui.setSendButtonListener(e -> {
             log.info("Send button pressed");
-            String transcription = speech2text.transcribe(microphoneService.getLastRecording(), this.sessionLanguage);
-//            String transcription = "this is a fake transcription";
-            chatHistory.addMessage(new Message("user", transcription));
-            // TODO maybe I want to pass the string directly?
-            gui.displayChatHistory(chatHistory);
             // send to OpenAI
-            SwingWorker<Void, Void> worker = new SwingWorker<>() {
-                @Override
-                protected Void doInBackground() throws Exception {
-                    // Perform the long-lasting process here
-                    // This will execute in the background thread
-
-                    gui.showLogMessage("Sending request to OpenAI using second thread");
-                    tandem.reply(chatHistory);
-                    return null;
-                }
-
-                @Override
-                protected void done() {
-                    // Executed on the EDT after the doInBackground() method completes
-                    // Update the UI or perform any necessary post-processing
-
-                    gui.showLogMessage("Reply captured!");
-                    chatHistory.addMessage(new Message("assistant", tandem.getLastReply()));
-                    gui.displayChatHistory(chatHistory);
-                }
-            };
-            worker.execute();
+            startTranscriptionTask();
         });
     }
 
+    private void startTranscriptionTask() {
+        SwingWorker<Void, Void> transcribeWorker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() {
 
-//    byte[] record = microphoneService.startRecording();
+                ui.setStateAreaText("Transcribing..");
+                speech2text.transcribe(microphoneService.getLastRecording(), sessionLanguage);
+                return null;
+            }
 
-//    String transcription = speech2text.transcribe(record);
-//    chatHistory.addMessage(new Message("user", transcription));
-//    log.info(transcription);
+            @Override
+            protected void done() {
+                chatHistory.addMessage(new Message("user", speech2text.getLastTranscription()));
+                // TODO maybe I want to pass the string directly?
+                ui.displayChatHistory(chatHistory);
+                startReplyTask();
+            }
+        };
+        transcribeWorker.execute();
+    }
+
+    private void startReplyTask() {
+        SwingWorker<Void, Void> aiWorker = new SwingWorker<>() {
+            @Override
+            protected Void doInBackground() {
+                // Perform the long-lasting process here
+                // This will execute in the background thread
+                ui.setStateAreaText("Waiting for response..");
+                tandem.reply(chatHistory);
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                // Executed on the EDT after the doInBackground() method completes
+                // Update the UI or perform any necessary post-processing
+                ui.setStateAreaText("Reply captured!");
+                chatHistory.addMessage(new Message("assistant", tandem.getLastReply()));
+                ui.displayChatHistory(chatHistory);
+            }
+        };
+        aiWorker.execute();
+    }
 }
