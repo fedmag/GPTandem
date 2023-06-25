@@ -46,7 +46,7 @@ public class Controller {
     void setSessionLanguage(Languages newLanguage) {this.sessionLanguage = newLanguage;} // TODO need a dropdown to select the language, probably the controller should not encapsulate this logic but should be demanded to the individual components.
 
     public void initController() {
-        ui.setStateAreaText("Press the \"Record\" when ready!");
+        ui.setStateAreaText("Press \"Record\" when ready!");
         ui.setSendButtonActive(false);
         ui.setRepeatLastButtonActive(false);
 
