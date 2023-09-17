@@ -1,7 +1,7 @@
 # GPTandem
 
 The idea is to leverage AI capabilities to create an artificial tandem partner.  
-The application is build using Java and Swing.
+The application is built using Java and Swing.
 ![pics/envVar.png](pics/ui.png)
 
 
