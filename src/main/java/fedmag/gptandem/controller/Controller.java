@@ -36,7 +36,7 @@ public class Controller {
         this.chatHistory = new ChatHistory();
         chatHistory.addMessage(new Message(
                 "system",
-                "you are an helpful tandem partner that is helping me learning " + language.getLongLanguageName() + " and will reply in such a language."));
+                "you are an helpful tandem partner that is helping me learning " + language.getLongLanguageName() + ". My current level is A2 and you will reply in such a language."));
         this.tandem = new ChatGPT();
         this.speaker = new GoogleTextToSpeech();
 
